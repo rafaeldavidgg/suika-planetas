@@ -1,0 +1,13 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*

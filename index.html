@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Órbitas — Suika de planetas</title>
+<meta name="description" content="Suelta cuerpos, fusiona iguales y aprende qué planeta es más grande. Suika educativo de planetas, instalable y offline.">
+<meta name="theme-color" content="#0a0c1c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header id="hud">
+    <div class="hud-box">
+      <span class="hud-label">Puntos</span>
+      <strong id="score">0</strong>
+    </div>
+    <div class="hud-box">
+      <span class="hud-label">Récord</span>
+      <strong id="best">0</strong>
+    </div>
+    <div class="hud-box next-box">
+      <span class="hud-label">Siguiente</span>
+      <canvas id="nextCanvas" width="56" height="56" aria-label="Siguiente cuerpo"></canvas>
+    </div>
+  </header>
+
+  <div id="combo" class="hidden" aria-live="polite">Combo x2</div>
+  <div id="toast" class="hidden" role="status"></div>
+
+  <main id="board-wrap">
+    <canvas id="game" width="400" height="640" aria-label="Cuenco del juego"></canvas>
+    <div id="controls">
+      <button id="btnPause" type="button" aria-label="Pausar">⏸</button>
+      <button id="btnMute" type="button" aria-label="Silenciar">🔊</button>
+      <button id="btnCodex" type="button" aria-label="Abrir Codex">🪐 Codex</button>
+      <button id="btnRestart" type="button" aria-label="Reiniciar">↻</button>
+    </div>
+  </main>
+
+  <div id="gameover" class="overlay hidden">
+    <div class="card">
+      <h2>Fin de la misión</h2>
+      <p>Puntos: <strong id="finalScore">0</strong></p>
+      <p>Récord: <strong id="finalBest">0</strong></p>
+      <button id="btnAgain" type="button">Jugar de nuevo</button>
+    </div>
+  </div>
+
+  <div id="pauseOverlay" class="overlay hidden">
+    <div class="card">
+      <h2>En pausa</h2>
+      <button id="btnResume" type="button">Continuar</button>
+    </div>
+  </div>
+
+  <div id="codex" class="overlay hidden" role="dialog" aria-label="Codex de cuerpos">
+    <div class="card wide">
+      <h2>Codex del sistema solar</h2>
+      <p class="disclaimer">Tamaños en pantalla adaptados para jugar. El orden por tamaño y los datos son reales.</p>
+      <div id="codexGrid"></div>
+      <button id="btnCloseCodex" type="button">Cerrar</button>
+    </div>
+  </div>
+
+  <footer>
+    <small>Arrastra arriba y suelta para soltar · Tamaños adaptados, orden real</small>
+  </footer>
+</div>
+<script src="vendor/matter.min.js"></script>
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
