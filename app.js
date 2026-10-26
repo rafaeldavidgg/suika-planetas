@@ -299,6 +299,7 @@
 
   function spawnBody(level, x, y) {
     const r = PLANETS[level].radius;
+    unlock(level);
     const body = Matter.Bodies.circle(x, y, r, {
       restitution: 0.2, friction: 0.25, frictionStatic: 0.4, frictionAir: 0.008, density: 0.0012
     });
@@ -419,6 +420,7 @@
     const x = Math.min(Math.max(dropX, WALL + r + 1), W - WALL - r - 1);
     spawnBody(current, x, DROP_Y);
     current = next; next = randDroppable();
+    unlock(current); unlock(next);
     cooldownUntil = now + COOLDOWN_MS;
     renderHUD();
   }
@@ -445,6 +447,22 @@
     document.getElementById('finalBest').textContent = best;
     document.getElementById('gameover').classList.remove('hidden');
   }
+  let confirmWasPaused = false;
+  function showRestartConfirm() {
+    const cr = document.getElementById('confirmRestart');
+    if (!cr || !cr.classList.contains('hidden')) return;
+    confirmWasPaused = isPaused;
+    isPaused = true;
+    cr.classList.remove('hidden');
+    const btn = document.getElementById('btnCancelRestart');
+    if (btn && btn.focus) try { btn.focus(); } catch (e) {}
+  }
+  function cancelRestartConfirm() {
+    const cr = document.getElementById('confirmRestart');
+    if (!cr) return;
+    cr.classList.add('hidden');
+    if (!isOver) isPaused = confirmWasPaused;
+  }
   function restart() {
     for (const b of bodies.slice()) Matter.World.remove(world, b);
     bodies = []; particles = [];
@@ -453,6 +471,9 @@
     cooldownUntil = 0;
     document.getElementById('gameover').classList.add('hidden');
     document.getElementById('pauseOverlay').classList.add('hidden');
+    const cr = document.getElementById('confirmRestart');
+    if (cr) cr.classList.add('hidden');
+    unlock(current); unlock(next);
     renderHUD();
   }
 
@@ -620,6 +641,8 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) ensureAudio(); });
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        const cr = document.getElementById('confirmRestart');
+        if (cr && !cr.classList.contains('hidden')) { cancelRestartConfirm(); return; }
         document.getElementById('codex').classList.add('hidden');
         return;
       }
@@ -627,8 +650,19 @@
       else if (e.key === 'ArrowRight') dropX = Math.min(W, dropX + 12);
       else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); tryDrop(); }
     });
-    document.getElementById('btnRestart').addEventListener('click', restart);
+    document.getElementById('btnRestart').addEventListener('click', () => {
+      if (isOver) { restart(); return; }
+      showRestartConfirm();
+    });
     document.getElementById('btnAgain').addEventListener('click', restart);
+    const btnConfirm = document.getElementById('btnConfirmRestart');
+    if (btnConfirm) btnConfirm.addEventListener('click', () => { restart(); });
+    const btnCancel = document.getElementById('btnCancelRestart');
+    if (btnCancel) btnCancel.addEventListener('click', cancelRestartConfirm);
+    const confirmOverlay = document.getElementById('confirmRestart');
+    if (confirmOverlay) confirmOverlay.addEventListener('click', (e) => {
+      if (e.target.id === 'confirmRestart') cancelRestartConfirm();
+    });
     document.getElementById('btnPause').addEventListener('click', () => {
       if (isOver) return;
       isPaused = true;
@@ -677,6 +711,7 @@
   setupWorld();
   bindInput();
   updateMuteBtn();
+  for (let i = 0; i <= DROPPABLE_MAX; i++) unlock(i);
   renderHUD(); renderCodex();
   bestEl.textContent = best;
   requestAnimationFrame(loop);

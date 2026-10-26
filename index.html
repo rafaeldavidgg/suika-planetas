@@ -36,7 +36,7 @@
       <button id="btnPause" type="button" aria-label="Pausar"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg></button>
       <button id="btnMute" type="button" aria-label="Silenciar"><svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M16.5 8.5a5 5 0 010 7"/><path d="M19 6a9 9 0 010 12"/></svg><svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg></button>
       <button id="btnCodex" type="button" aria-label="Abrir Codex"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><ellipse cx="12" cy="12" rx="10" ry="3.6" transform="rotate(-20 12 12)"/></svg><span>Codex</span></button>
-      <button id="btnRestart" type="button" aria-label="Reiniciar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 109-9 9.7 9.7 0 00-6.7 2.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+      <button id="btnRestart" type="button" aria-label="Reiniciar partida (pierdes el progreso)" title="Reiniciar partida: pierdes el progreso actual"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 109-9 9.7 9.7 0 00-6.7 2.7L3 8"/><path d="M3 3v5h5"/></svg></button>
     </div>
   </main>
 
@@ -53,6 +53,17 @@
     <div class="card">
       <h2>En pausa</h2>
       <button id="btnResume" type="button">Continuar</button>
+    </div>
+  </div>
+
+  <div id="confirmRestart" class="overlay hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirmRestartTitle" aria-describedby="confirmRestartDesc">
+    <div class="card">
+      <h2 id="confirmRestartTitle">¿Reiniciar partida?</h2>
+      <p id="confirmRestartDesc">Esto reinicia la partida entera y <strong>perderás todo el progreso</strong> de la partida actual (puntos y tablero). Tu récord y tu Codex se conservan.</p>
+      <div class="confirm-actions">
+        <button id="btnCancelRestart" type="button" class="btn-secondary">Cancelar</button>
+        <button id="btnConfirmRestart" type="button" class="btn-danger">Sí, reiniciar</button>
+      </div>
     </div>
   </div>
 

@@ -1,5 +1,5 @@
 /* Órbitas SW cache-first */
-const CACHE = 'orbitas-v2';
+const CACHE = 'orbitas-v3';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js',
   './vendor/matter.min.js', './manifest.json',
