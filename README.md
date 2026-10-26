@@ -2,7 +2,13 @@
 
 Juego web estilo Suika (suelta piezas, fusiona iguales para crear la siguiente mayor) con tema de planetas y toque educativo: cada fusión enseña qué cuerpo es más grande que otro. 100% cliente, mobile-first e instalable como PWA.
 
-## Jugar
+## Jugar online
+
+Juega en **https://rafaeldavidgg.github.io/suika-planetas/** (HTTPS, instalable y offline tras la primera carga).
+
+Despliegue: GitHub Pages sirve la rama `main` (carpeta `/`, raíz) con redespliegue automático en cada push.
+
+## Jugar en local
 
 Abre `index.html` en el navegador, o sirve la carpeta en local:
 
