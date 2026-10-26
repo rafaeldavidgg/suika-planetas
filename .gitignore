@@ -11,3 +11,8 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Tooling local del agente (binario por plataforma, ~21 MB).
+# Reinstalable con: npx impeccable install --providers=opencode
+.opencode/skills/impeccable/
+.opencode/commands/impeccable.md
