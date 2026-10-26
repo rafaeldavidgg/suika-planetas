@@ -230,12 +230,34 @@
   }
 
   // --- Audio ---
+  // Nota iOS: el AudioContext solo arranca dentro de un gesto del usuario
+  // (touch/click) y el conmutador de silencio del iPhone silencia la Web Audio:
+  // eso no es un bug del juego, no se puede saltar por software.
   function ensureAudio() {
-    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+      // Desbloqueo iOS clásico: buffer silencioso reproducido dentro del gesto
+      if (audioCtx) {
+        try {
+          const len = Math.max(1, Math.floor(audioCtx.sampleRate * 0.02));
+          const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+          const src = audioCtx.createBufferSource();
+          src.buffer = buf;
+          src.connect(audioCtx.destination);
+          if (src.start) src.start(0);
+        } catch (e2) {}
+      }
+    }
+    if (audioCtx && (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted')) {
+      try { const p = audioCtx.resume(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+    }
   }
   function pop(level) {
-    if (muted || !audioCtx) return;
+    if (muted || !audioCtx || audioCtx.state !== 'running') {
+      // Si iOS aún lo tiene suspendido, reintenta desbloquear para la próxima fusión
+      if (audioCtx && !muted && audioCtx.state !== 'running') ensureAudio();
+      return;
+    }
     const t = audioCtx.currentTime;
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
@@ -589,6 +611,13 @@
     canvas.addEventListener('pointerdown', (e) => { move(e.clientX); ensureAudio(); });
     canvas.addEventListener('pointerup', (e) => { move(e.clientX); tryDrop(); });
     canvas.addEventListener('pointercancel', () => {});
+    // Desbloqueo de audio en iOS: debe ocurrir dentro de un gesto touch/click.
+    // Solo con pointerdown algunos Safari no desbloquean, así que se escucha todo.
+    const unlock = () => ensureAudio();
+    window.addEventListener('touchstart', unlock, { passive: true });
+    window.addEventListener('touchend', unlock, { passive: true });
+    window.addEventListener('click', unlock);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) ensureAudio(); });
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         document.getElementById('codex').classList.add('hidden');
